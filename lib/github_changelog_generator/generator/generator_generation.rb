@@ -166,6 +166,7 @@ module GitHubChangelogGenerator
     # @return [String] Markdown-formatted single issue
     def get_string_for_issue(issue)
       encapsulated_title = encapsulate_string issue[:title]
+      asana_links = get_assana_links(issue)
 
       title_with_number = "#{encapsulated_title} [\\##{issue[:number]}](#{issue.html_url})"
 
@@ -178,7 +179,28 @@ module GitHubChangelogGenerator
                                end
         end
       end
+
+      unless asana_links.empty?
+        asana_links.each do |link|
+          title_with_number += "\n    - asana: #{link}"
+        end
+      end
+
       title_with_number
+    end
+
+    # Parse issue contain asana links
+    #
+    # @param [Hash] issue Fetched issue from GitHub
+    # @return [Array] markdown style asana links
+    ASANA_LINK_REGEX = /(\[.*\]\()?(http.*asana.*)(\))?/
+    def get_assana_links(issue)
+      body = issue[:body]
+
+      matchs = body.scan ASANA_LINK_REGEX
+      match_links = matchs.map { |match| match[0].to_s + match[1].to_s + match[2].to_s }
+
+      match_links
     end
   end
 end
