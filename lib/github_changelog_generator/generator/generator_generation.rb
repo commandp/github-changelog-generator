@@ -182,7 +182,7 @@ module GitHubChangelogGenerator
 
       unless asana_links.empty?
         asana_links.each do |link|
-          title_with_number += "\n    - asana: #{link}"
+          title_with_number += "\n    - <sub><sup>asana: #{link}</sup></sub>"
         end
       end
 
@@ -199,8 +199,6 @@ module GitHubChangelogGenerator
 
       matchs = body.scan ASANA_LINK_REGEX
       match_links = matchs.map { |match| match[0].to_s + match[1].to_s + match[2].to_s }
-
-      match_links
     end
   end
 end
