@@ -180,12 +180,18 @@ module GitHubChangelogGenerator
         end
         if fetched_pr
           pr[:merged_at] = fetched_pr[:merged_at]
+          pr[:head] = fetched_pr[:head]
           closed_pull_requests.delete(fetched_pr)
         end
       end
 
       pull_requests.select! do |pr|
-        !pr[:merged_at].nil?
+        next if pr[:merged_at].nil?
+
+        # commandp specific: drop pr if head is on release branch
+        next if (pr[:head][:ref] =~ /^(release|realese|realease)/)
+
+        true
       end
 
       pull_requests
